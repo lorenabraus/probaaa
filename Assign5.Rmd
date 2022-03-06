@@ -1,0 +1,99 @@
+---
+title: "Assignment 5"
+author: "Lorena Braus"
+output: pdf_document
+---
+
+
+\subsection{new:}
+```{r warning=FALSE, message=FALSE}
+library(olsrr)
+library(dplyr)
+
+p <- 5
+n <- 100
+tau <- 2
+
+simulate<-function(a=c(1,2),n=100,tau=2){
+  
+X <<- matrix(rnorm(n*p), ncol=p)
+
+betas <- 1:(p+1)
+
+eps <- rnorm(n,sd=sqrt(tau))
+
+Y <<- betas[1] + X[,a]%*%betas[a+1] + eps
+
+mod <- lm(Y~X[,1]+X[,2]+X[,3]+X[,4]+X[,5])
+
+res<-ols_step_all_possible(mod)
+r2<-res$predictors[which(res$rsquare==max(res$rsquare))]
+ar2<-res$predictors[which(res$adjr==max(res$adjr))]
+mcp<-res$predictors[which(res$cp==min(res$cp))]
+aic<-res$predictors[which(res$aic==min(res$aic))]
+bic<-res$predictors[which(res$sbc==min(res$sbc))]
+
+return(data.frame(r2=r2,ar2=ar2,mc=mcp,aic=aic,bic=bic))
+}
+
+k<-40
+
+out1<-do.call(rbind.data.frame,lapply(c(1:k),function(i){return(simulate(a=c(1,2),n=100,tau=2))}))
+
+cat("R2")
+table(out1$r2)/k
+cat("Adjusted R2")
+table(out1$ar2)/k
+cat("Mallows'CP")
+table(out1$mc)/k
+cat("AIC")
+table(out1$aic)/k
+cat("BIC")
+table(out1$bic)/k
+
+
+out2<-do.call(rbind.data.frame,lapply(c(1:k),function(i){return(simulate(a=c(1,2,4,5),n=100,tau=2))}))
+
+cat("R2")
+table(out2$r2)/k
+cat("Adjusted R2")
+table(out2$ar2)/k
+cat("Mallows'CP")
+table(out2$mc)/k
+cat("AIC")
+table(out2$aic)/k
+cat("BIC")
+table(out2$bic)/k
+
+
+out3<-do.call(rbind.data.frame,lapply(c(1:k),function(i){return(simulate(a=c(1,4),n=100,tau=2))}))
+
+cat("R2")
+table(out3$r2)/k
+cat("Adjusted R2")
+table(out3$ar2)/k
+cat("Mallows'CP")
+table(out3$mc)/k
+cat("AIC")
+table(out3$aic)/k
+cat("BIC")
+table(out3$bic)/k
+
+
+out4<-do.call(rbind.data.frame,lapply(c(1:k),function(i){return(simulate(a=c(1,2,3,4,5),n=100,tau=2))}))
+
+cat("R2")
+table(out4$r2)/k
+cat("Adjusted R2")
+table(out4$ar2)/k
+cat("Mallows'CP")
+table(out4$mc)/k
+cat("AIC")
+table(out4$aic)/k
+cat("BIC")
+table(out4$bic)/k
+
+```
+
+
+
